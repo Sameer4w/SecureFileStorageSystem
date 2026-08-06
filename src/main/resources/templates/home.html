@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Secure File Storage System</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+
+        body{
+
+            margin:0;
+
+            background:linear-gradient(135deg,#2563EB,#7C3AED);
+
+            color:white;
+
+            overflow-x:hidden;
+
+        }
+
+        .hero{
+
+            min-height:100vh;
+
+            display:flex;
+
+            justify-content:center;
+
+            align-items:center;
+
+            padding:40px;
+
+        }
+
+        .hero-card{
+
+            width:1100px;
+
+            background:rgba(255,255,255,0.12);
+
+            backdrop-filter:blur(12px);
+
+            border-radius:25px;
+
+            padding:60px;
+
+            display:flex;
+
+            justify-content:space-between;
+
+            align-items:center;
+
+            gap:50px;
+
+            box-shadow:0 20px 60px rgba(0,0,0,.25);
+
+        }
+
+        .hero-left{
+
+            flex:1;
+
+        }
+
+        .hero-right{
+
+            flex:1;
+
+            text-align:center;
+
+        }
+
+        .hero h1{
+
+            color:white;
+
+            font-size:60px;
+
+            margin-bottom:20px;
+
+        }
+
+        .hero p{
+
+            font-size:20px;
+
+            line-height:1.8;
+
+            color:#E5E7EB;
+
+        }
+
+        .hero-buttons{
+
+            margin-top:35px;
+
+        }
+
+        .hero-buttons button{
+
+            margin-right:15px;
+
+            margin-top:10px;
+
+            padding:16px 30px;
+
+            font-size:17px;
+
+            border-radius:12px;
+
+        }
+
+        .login-btn{
+
+            background:white;
+
+            color:#2563EB;
+
+        }
+
+        .login-btn:hover{
+
+            background:#F3F4F6;
+
+        }
+
+        .register-btn{
+
+            background:#22C55E;
+
+        }
+
+        .register-btn:hover{
+
+            background:#16A34A;
+
+        }
+
+        .cloud{
+
+            font-size:220px;
+
+            animation:float 3s ease-in-out infinite;
+
+        }
+
+        @keyframes float{
+
+            0%{
+
+                transform:translateY(0px);
+
+            }
+
+            50%{
+
+                transform:translateY(-20px);
+
+            }
+
+            100%{
+
+                transform:translateY(0px);
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="hero">
+
+    <div class="hero-card">
+
+        <div class="hero-left">
+
+            <h1>
+
+                🔐 Secure File Storage
+
+            </h1>
+
+            <p>
+
+                Store, protect and share your files securely.
+
+                Built using Spring Boot, MySQL and Thymeleaf.
+
+                Fast, secure and easy to use.
+
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="/login">
+
+                    <button class="login-btn">
+
+                        🔑 Login
+
+                    </button>
+
+                </a>
+
+                <a href="/register">
+                    <button class="register-btn">
+                        📝 Register
+                    </button>
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="hero-right">
+
+            <div class="cloud">
+
+                ☁️
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===========================
+     FEATURES
+=========================== -->
+
+<section style="padding:70px 40px;">
+
+    <h2 style="color:white;text-align:center;font-size:42px;">
+
+        Why Choose Our Platform?
+
+    </h2>
+
+    <div style="
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+        gap:30px;
+        max-width:1200px;
+        margin:50px auto;">
+
+        <div class="card text-center">
+
+            <h1>🔒</h1>
+
+            <h3>Secure Storage</h3>
+
+            <p>
+
+                Files are securely stored and accessible only by
+                authenticated users.
+
+            </p>
+
+        </div>
+
+        <div class="card text-center">
+
+            <h1>⚡</h1>
+
+            <h3>Fast Upload</h3>
+
+            <p>
+
+                Upload files quickly with drag & drop support
+                and upload progress.
+
+            </p>
+
+        </div>
+
+        <div class="card text-center">
+
+            <h1>🔗</h1>
+
+            <h3>Easy Sharing</h3>
+
+            <p>
+
+                Share files instantly using secure links with
+                expiration support.
+
+            </p>
+
+        </div>
+
+        <div class="card text-center">
+
+            <h1>📁</h1>
+
+            <h3>File Management</h3>
+
+            <p>
+
+                Rename, preview, delete and organize files
+                easily.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ===========================
+     FOOTER
+=========================== -->
+
+<footer style="
+background:#111827;
+color:white;
+padding:40px;
+text-align:center;">
+
+    <h2 style="color:white;">
+
+        Secure File Storage System
+
+    </h2>
+
+    <p style="color:#D1D5DB;">
+
+        Built using Spring Boot • MySQL • Thymeleaf
+
+    </p>
+
+    <br>
+
+    <p style="color:#9CA3AF;">
+
+        © 2026 Secure File Storage System
+
+    </p>
+
+</footer>
+<script src="/js/theme.js"></script>
+
+</body>
+
+</html>

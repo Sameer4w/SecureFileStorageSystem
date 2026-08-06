@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>My Files</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+
+<body>
+
+<div th:replace="~{navbar :: navbar}"></div>
+<div id="toast"></div>
+
+<div class="full-container fade-in">
+
+    <h1>📁 My Files</h1>
+
+    <p style="color:#666;margin-bottom:25px;">
+        Manage, preview, share and organize your uploaded files.
+    </p>
+
+    <div class="card">
+
+        <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                flex-wrap:wrap;
+                gap:15px;
+                margin-bottom:25px;">
+
+            <input
+                    type="text"
+                    id="searchBox"
+                    placeholder="🔍 Search files..."
+                    onkeyup="searchFiles()"
+                    style="max-width:350px;">
+
+            <select
+                    id="sortOption"
+                    onchange="sortTable()"
+                    style="
+                    padding:12px;
+                    border-radius:8px;
+                    border:1px solid #ddd;
+                    font-size:15px;">
+
+                <option value="newest">Newest First</option>
+
+                <option value="oldest">Oldest First</option>
+
+                <option value="nameAsc">Name (A-Z)</option>
+
+                <option value="nameDesc">Name (Z-A)</option>
+
+                <option value="sizeLarge">Largest Size</option>
+
+                <option value="sizeSmall">Smallest Size</option>
+
+            </select>
+
+        </div>
+
+        <div th:if="${#lists.isEmpty(files)}"
+             class="text-center">
+
+            <h1 style="font-size:70px;">
+                📂
+            </h1>
+
+            <h2>No Files Uploaded</h2>
+
+            <p style="margin-bottom:25px;">
+                Upload your first file and start managing it securely.
+            </p>
+
+            <a href="/upload">
+
+                <button>
+                    📤 Upload File
+                </button>
+
+            </a>
+
+        </div>
+
+        <table
+                id="fileTable"
+                th:if="${!#lists.isEmpty(files)}">
+
+            <thead>
+
+            <tr>
+
+                <th>File</th>
+
+                <th>Size</th>
+
+                <th>Upload Date</th>
+
+                <th style="width:420px;">
+                    Actions
+                </th>
+
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            <tr th:each="file : ${files}">
+
+                <td>
+
+                    <span
+                            style="font-size:24px;margin-right:10px;"
+                            th:text="${file.icon}">
+                    </span>
+
+                    <span
+                            th:text="${file.name}">
+                    </span>
+
+                </td>
+
+                <td
+                        th:text="${#numbers.formatDecimal(file.size/1024.0,1,2)} + ' KB'">
+                </td>
+
+                <td
+                        th:attr="data-time=${file.date}"
+                        th:text="${#dates.format(file.date,'dd-MM-yyyy HH:mm')}">
+                </td>
+
+                <td>
+
+                    <a th:href="@{/download/{name}(name=${file.name})}">
+
+                        <button class="btn-download">
+                            Download
+                        </button>
+
+                    </a>
+
+                    <a
+                            th:if="${#strings.endsWith(file.name,'.pdf')
+        or #strings.endsWith(file.name,'.jpg')
+        or #strings.endsWith(file.name,'.jpeg')
+        or #strings.endsWith(file.name,'.png')
+        or #strings.endsWith(file.name,'.gif')}"
+                            th:href="@{/preview/{name}(name=${file.name})}"
+                            target="_blank">
+
+                        <button class="btn-preview">
+                            👁 Preview
+                        </button>
+
+                    </a>
+
+                    <button
+                            th:unless="${#strings.endsWith(file.name,'.pdf')
+        or #strings.endsWith(file.name,'.jpg')
+        or #strings.endsWith(file.name,'.jpeg')
+        or #strings.endsWith(file.name,'.png')
+        or #strings.endsWith(file.name,'.gif')}"
+                            class="btn-preview"
+                            onclick="showPreviewMessage()">
+
+                        👁 Preview
+
+                    </button>
+
+                    <a
+                            th:href="@{/rename/{name}(name=${file.name})}">
+
+                        <button class="btn-rename">
+                            Rename
+                        </button>
+
+                    </a>
+
+                    <a
+                            th:href="@{/share/create/{name}(name=${file.name})}"
+                            target="_blank">
+
+                        <button class="btn-share">
+                            Share
+                        </button>
+
+                    </a>
+
+                    <a
+                            th:href="@{/delete/{name}(name=${file.name})}"
+                            onclick="return confirm('Delete this file?');">
+
+                        <button class="btn-delete">
+                            Delete
+                        </button>
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+        <br>
+
+        <div
+                th:if="${!#lists.isEmpty(files)}"
+                style="
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                gap:20px;">
+
+            <button onclick="previousPage()">
+
+                ⬅ Previous
+
+            </button>
+
+            <span
+                    id="pageNumber"
+                    style="
+                    font-weight:bold;
+                    font-size:18px;">
+            </span>
+
+            <button onclick="nextPage()">
+
+                Next ➡
+
+            </button>
+
+        </div>
+
+        <p
+                id="noFiles"
+                class="text-center"
+                style="
+                color:red;
+                font-weight:bold;
+                display:none;
+                margin-top:20px;">
+
+            No files found.
+
+        </p>
+
+    </div>
+
+</div>
+
+<script>
+
+    function showToast(message, success = true){
+
+        const toast = document.getElementById("toast");
+
+        toast.innerHTML = message;
+
+        toast.style.background = success ? "#22C55E" : "#EF4444";
+
+        toast.classList.add("show");
+
+        setTimeout(function(){
+
+            toast.classList.remove("show");
+
+        },3000);
+
+    }
+
+    function searchFiles(){
+
+        let input =
+            document.getElementById("searchBox")
+                .value
+                .toLowerCase();
+
+        let rows =
+            document.querySelectorAll("#fileTable tbody tr");
+
+        let found = false;
+
+        rows.forEach(function(row){
+
+            let fileName =
+                row.cells[0].innerText.toLowerCase();
+
+            if(fileName.includes(input)){
+
+                row.style.display="";
+
+                found=true;
+
+            }
+
+            else{
+
+                row.style.display="none";
+
+            }
+
+        });
+
+        document.getElementById("noFiles").style.display =
+            found ? "none" : "block";
+
+    }
+
+    function sortTable(){
+
+        let option =
+            document.getElementById("sortOption").value;
+
+        let table =
+            document.getElementById("fileTable");
+
+        let tbody =
+            table.tBodies[0];
+
+        let rows =
+            Array.from(tbody.rows);
+
+        rows.sort(function(a,b){
+
+            if(option==="nameAsc"){
+
+                return a.cells[0].innerText
+                    .localeCompare(b.cells[0].innerText);
+
+            }
+
+            if(option==="nameDesc"){
+
+                return b.cells[0].innerText
+                    .localeCompare(a.cells[0].innerText);
+
+            }
+
+            if(option==="sizeLarge"){
+
+                return parseFloat(b.cells[1].innerText)
+                    - parseFloat(a.cells[1].innerText);
+
+            }
+
+            if(option==="sizeSmall"){
+
+                return parseFloat(a.cells[1].innerText)
+                    - parseFloat(b.cells[1].innerText);
+
+            }
+
+            if(option==="newest"){
+
+                return new Date(b.cells[2].dataset.time)
+                    - new Date(a.cells[2].dataset.time);
+
+            }
+
+            if(option==="oldest"){
+
+                return new Date(a.cells[2].dataset.time)
+                    - new Date(b.cells[2].dataset.time);
+
+            }
+
+        });
+
+        rows.forEach(function(row){
+
+            tbody.appendChild(row);
+
+        });
+
+        currentPage=1;
+
+        displayTable();
+
+    }
+
+    let currentPage = 1;
+
+    const rowsPerPage = 5;
+
+    function displayTable(){
+
+        let table =
+            document.getElementById("fileTable");
+
+        if(!table) return;
+
+        let rows =
+            Array.from(table.tBodies[0].rows);
+
+        let visibleRows =
+            rows.filter(r => r.style.display !== "none");
+
+        let totalPages =
+            Math.max(1,
+                Math.ceil(
+                    visibleRows.length/rowsPerPage
+                ));
+
+        rows.forEach(function(row){
+
+            row.style.display="none";
+
+        });
+
+        visibleRows.forEach(function(row,index){
+
+            if(index >= (currentPage-1)*rowsPerPage &&
+                index < currentPage*rowsPerPage){
+
+                row.style.display="";
+
+            }
+
+        });
+
+        document.getElementById("pageNumber").innerHTML =
+
+            "Page " + currentPage + " / " + totalPages;
+
+    }
+
+    function nextPage(){
+
+        let table =
+            document.getElementById("fileTable");
+
+        if(!table) return;
+
+        let visibleRows =
+            Array.from(table.tBodies[0].rows)
+                .filter(r=>r.style.display!=="none");
+
+        let totalPages =
+            Math.max(1,
+                Math.ceil(
+                    visibleRows.length/rowsPerPage
+                ));
+
+        if(currentPage<totalPages){
+
+            currentPage++;
+
+            displayTable();
+
+        }
+
+    }
+
+    function previousPage(){
+
+        if(currentPage>1){
+
+            currentPage--;
+
+            displayTable();
+
+        }
+
+    }
+
+    window.onload=function(){
+
+        displayTable();
+
+    };
+
+</script>
+
+<script>
+
+    function showPreviewMessage(){
+
+        alert("Preview is available only for PDF and Image files.\n\nPlease download this file to view it.");
+
+    }
+
+</script>
+<script src="/js/theme.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Rename File</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+
+<body>
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+<div id="toast"></div>
+
+<div class="container fade-in">
+
+    <div class="card">
+
+        <h2>✏ Rename File</h2>
+
+        <p class="text-center mb-20">
+
+            Change your file name without changing its content.
+
+        </p>
+
+        <form action="/rename" method="post">
+
+            <input
+                    type="hidden"
+                    name="oldName"
+                    th:value="${oldName}">
+
+            <label>Current File Name</label>
+
+            <input
+                    type="text"
+                    th:value="${oldName}"
+                    readonly>
+
+            <label>New File Name</label>
+
+            <input
+                    type="text"
+                    name="newName"
+                    placeholder="Enter new file name"
+                    required>
+
+            <button type="submit">
+
+                ✏ Rename File
+
+            </button>
+
+        </form>
+
+        <br>
+
+        <div class="text-center">
+
+            <a href="/files">
+
+                <button
+                        type="button"
+                        class="btn-back">
+
+                    ⬅ Back to My Files
+
+                </button>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    function showToast(message, success = true){
+
+        const toast = document.getElementById("toast");
+
+        toast.innerHTML = message;
+
+        toast.className = "";
+
+        if(success){
+
+            toast.classList.add("success");
+
+        }
+
+        else{
+
+            toast.classList.add("error");
+
+        }
+
+        toast.classList.add("show");
+
+        setTimeout(function(){
+
+            toast.classList.remove("show");
+
+        },3000);
+
+    }
+
+</script>
+<script src="/js/theme.js"></script>
+</body>
+
+</html>

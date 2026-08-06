@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+
+<body>
+<div th:replace="~{navbar :: navbar}"></div>
+<div class="full-container fade-in">
+
+    <h1>📁 Secure File Storage Dashboard</h1>
+
+    <h3>
+        Welcome,
+        <span th:text="${name}"></span> 👋
+    </h3>
+
+    <br>
+
+    <div class="dashboard-grid">
+
+        <div class="card">
+
+            <h3>📄 Total Files</h3>
+
+            <h1 th:text="${totalFiles}"></h1>
+
+        </div>
+
+        <div class="card">
+
+            <h3>💾 Storage Used</h3>
+
+            <h1 th:text="${storage}"></h1>
+
+        </div>
+
+        <div class="card">
+
+            <h3>🕒 Last Upload</h3>
+
+            <p th:text="${lastUpload}"></p>
+
+        </div>
+
+    </div>
+
+    <br><br>
+
+    <div class="card">
+
+        <h2>💾 Storage Usage</h2>
+
+        <div class="storage-container">
+
+            <div id="storageBar"
+                  class="storage-bar"
+                  th:style="'width:' + ${usedPercentage} + '%'">
+
+            </div>
+
+        </div>
+
+        <br>
+
+        <<p class="storage-text">
+
+            <span th:text="${usedMB}"></span>
+
+            MB
+
+            /
+
+            <span th:text="${totalLimitMB}"></span>
+
+            MB Used
+
+        </p>
+
+    </div>
+
+    <br><br>
+
+    <div class="card">
+
+        <h2>🕒 Recent Activity</h2>
+
+        <div th:if="${#lists.isEmpty(activities)}">
+
+            <p>No recent activity.</p>
+
+        </div>
+
+        <table th:if="${!#lists.isEmpty(activities)}">
+
+            <tr>
+
+                <th>Activity</th>
+
+                <th>File</th>
+
+                <th>Time</th>
+
+            </tr>
+
+            <tr th:each="activity : ${activities}">
+
+                <td th:text="${activity.activityType}"></td>
+
+                <td th:text="${activity.fileName}"></td>
+
+                <td th:text="${#temporals.format(activity.activityTime,'dd-MM-yyyy HH:mm')}"></td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+    <br><br>
+
+    <hr class="section-divider">
+
+    <h2>📊 Storage Statistics</h2>
+
+    <div class="chart-grid">
+
+        <div class="card">
+            <canvas id="storageChart"></canvas>
+        </div>
+
+        <div class="card">
+            <canvas id="fileChart"></canvas>
+        </div>
+
+    </div>
+
+    <br><br>
+
+    <br><br>
+
+    <h2>Quick Actions</h2>
+
+    <<div class="quick-grid">
+
+        <a href="/upload">
+
+            <div class="card text-center quick-card">
+
+                <h1>📤</h1>
+
+                <h3>Upload Files</h3>
+
+            </div>
+
+        </a>
+
+        <a href="/files">
+
+            <div class="card text-center">
+
+                <h1>📁</h1>
+
+                <h3>My Files</h3>
+
+            </div>
+
+        </a>
+
+        <a href="/profile">
+
+            <div class="card text-center">
+
+                <h1>👤</h1>
+
+                <h3>Profile</h3>
+
+            </div>
+
+        </a>
+
+        <a href="/logout">
+
+            <div class="card text-center">
+
+                <h1>🚪</h1>
+
+                <h3>Logout</h3>
+
+            </div>
+
+        </a>
+
+    </div>
+
+</div>
+
+<script>
+
+    window.onload=function(){
+
+        let percent=[[${usedPercentage}]];
+
+        let bar=document.getElementById("storageBar");
+
+        if(percent>=90){
+
+            bar.style.background="#EF4444";
+
+        }
+
+        else if(percent>=70){
+
+            bar.style.background="#F59E0B";
+
+        }
+
+        else{
+
+            bar.style.background="#22C55E";
+
+        }
+
+    };
+
+</script>
+<script src="/js/theme.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+
+    const usedStorage = [[${usedStorage}]];
+    const freeStorage = [[${freeStorage}]];
+
+    const pdfCount = [[${pdfCount}]];
+    const imageCount = [[${imageCount}]];
+    const docCount = [[${docCount}]];
+
+    // Storage Pie Chart
+    new Chart(document.getElementById("storageChart"),{
+
+        type:"pie",
+
+        data:{
+
+            labels:["Used","Free"],
+
+            datasets:[{
+
+                data:[usedStorage,freeStorage],
+
+                backgroundColor:[
+
+                    "#2563EB",
+                    "#22C55E"
+
+                ]
+
+            }]
+
+        }
+
+    });
+
+    // File Type Bar Chart
+    new Chart(document.getElementById("fileChart"),{
+
+        type:"bar",
+
+        data:{
+
+            labels:["PDF","Images","Documents"],
+
+            datasets:[{
+
+                label:"Files",
+
+                data:[
+
+                    pdfCount,
+                    imageCount,
+                    docCount
+
+                ],
+
+                backgroundColor:[
+
+                    "#EF4444",
+                    "#3B82F6",
+                    "#22C55E"
+
+                ]
+
+            }]
+
+        },
+
+        options:{
+
+            responsive:true,
+
+            plugins:{
+
+                legend:{
+                    display:false
+                }
+
+            }
+
+        }
+
+    });
+
+</script>
+</body>
+
+</html>

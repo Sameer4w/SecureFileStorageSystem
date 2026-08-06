@@ -1,0 +1,13 @@
+1️⃣ Minimum Stack
+2️⃣ Stock Span Problem
+3️⃣ Stack Permutations
+4️⃣ Loop Detection
+5️⃣ Even–Odd Segregation
+6️⃣ Iterative Tower of Hanoi
+7️⃣ Priority Queue using DLL
+8️⃣ Sort without Extra Space
+9️⃣ Celebrity Problem
+🔟 Merge Sort for DLL
+1️⃣1️⃣ Bitonic DLL Sort
+
+

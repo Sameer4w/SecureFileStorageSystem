@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Upload File</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+
+<body>
+
+<div th:replace="~{navbar :: navbar}"></div>
+<div id="toast"></div>
+
+<div class="container fade-in">
+
+    <div class="card">
+
+        <h2>📤 Upload File</h2>
+
+        <p class="text-center mb-20">
+            Upload your documents securely
+        </p>
+
+        <div id="dropZone" class="drop-zone">
+
+            <h3>📂 Drag & Drop File Here</h3>
+
+            <p>or</p>
+
+            <input type="file" id="file">
+
+        </div>
+
+        <br>
+
+        <button id="uploadBtn" onclick="uploadFile()">
+            Upload
+        </button>
+
+        <div id="loader" class="hidden mt-20">
+
+            <div class="spinner"></div>
+
+            <p>Uploading...</p>
+
+        </div>
+
+        <br>
+
+        <progress id="progressBar" value="0" max="100"></progress>
+
+        <div id="status"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+    const dropZone = document.getElementById("dropZone");
+
+    dropZone.addEventListener("dragover", function(e){
+
+        e.preventDefault();
+
+        dropZone.classList.add("dragover");
+
+    });
+
+    dropZone.addEventListener("dragleave", function(){
+
+        dropZone.classList.remove("dragover");
+
+    });
+
+    dropZone.addEventListener("drop", function(e){
+
+        e.preventDefault();
+
+        dropZone.classList.remove("dragover");
+
+        const files = e.dataTransfer.files;
+
+        document.getElementById("file").files = files;
+
+        if(files.length > 0){
+
+            document.getElementById("status").innerHTML =
+                "Selected : " + files[0].name;
+
+        }
+
+    });
+
+    document.getElementById("file").addEventListener("change",function(){
+
+        if(this.files.length>0){
+
+            document.getElementById("status").innerHTML =
+                "Selected : " + this.files[0].name;
+
+        }
+
+    });
+
+    function showToast(message, success = true){
+
+        const toast = document.getElementById("toast");
+
+        toast.innerHTML = message;
+
+        toast.className = "";
+
+        if(success){
+
+            toast.classList.add("success");
+
+        }
+
+        else{
+
+            toast.classList.add("error");
+
+        }
+
+        toast.classList.add("show");
+
+        setTimeout(function(){
+
+            toast.classList.remove("show");
+
+        },3000);
+
+    }
+
+    function uploadFile(){
+
+        const btn=document.getElementById("uploadBtn");
+
+        const fileInput=document.getElementById("file");
+
+        if(fileInput.files.length===0){
+
+            showToast("Please select a file",false);
+
+            return;
+
+        }
+
+        btn.disabled=true;
+
+        btn.innerHTML="Uploading...";
+
+        document.getElementById("loader").classList.remove("hidden");
+
+        let formData=new FormData();
+
+        formData.append("file",fileInput.files[0]);
+
+        let xhr=new XMLHttpRequest();
+
+        xhr.open("POST","/upload",true);
+
+        xhr.upload.onprogress=function(event){
+
+            if(event.lengthComputable){
+
+                let percent=Math.round((event.loaded/event.total)*100);
+
+                document.getElementById("progressBar").value=percent;
+
+                document.getElementById("status").innerHTML=
+                    "Uploading... "+percent+"%";
+
+            }
+
+        };
+
+        xhr.onload=function(){
+
+            document.getElementById("loader").classList.add("hidden");
+
+            btn.disabled=false;
+
+            btn.innerHTML="Upload";
+
+            if(xhr.status===200){
+
+                document.getElementById("progressBar").value=100;
+
+                document.getElementById("status").innerHTML=
+                    "✅ "+xhr.responseText;
+
+                showToast("File Uploaded Successfully",true);
+
+                setTimeout(function(){
+
+                    window.location="/files";
+
+                },1500);
+
+            }
+
+            else{
+
+                document.getElementById("status").innerHTML=
+                    "❌ Upload Failed";
+
+                showToast("Upload Failed",false);
+
+            }
+
+        };
+
+        xhr.send(formData);
+
+    }
+
+</script>
+<script src="/js/theme.js"></script>
+</body>
+
+</html>

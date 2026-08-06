@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+
+<body>
+<div th:replace="~{navbar :: navbar}"></div>
+
+<div class="full-container fade-in">
+
+    <h1>🛡 Admin Dashboard</h1>
+
+    <p class="admin-subtitle">
+        Manage users and monitor the Secure File Storage System.
+    </p>
+
+    <!-- Statistics Cards -->
+
+    <div class="admin-stats">
+
+        <div class="card text-center">
+
+            <h3>👥 Total Users</h3>
+
+            <h1 th:text="${totalUsers}"></h1>
+
+        </div>
+
+        <div class="card text-center">
+
+            <h3>📁 Total Files</h3>
+
+            <h1 th:text="${totalFiles}"></h1>
+
+        </div>
+
+        <div class="card text-center">
+
+            <h3>💾 Total Storage</h3>
+
+            <h1 th:text="${storage}"></h1>
+
+        </div>
+
+    </div>
+
+    <!-- Users Table -->
+
+    <div class="card">
+
+        <h2>User Management</h2>
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>👤 Full Name</th>
+
+                <th>📧 Email</th>
+
+                <th>Status</th>
+
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            <tr th:each="user : ${users}">
+
+                <td th:text="${user.fullName}"></td>
+
+                <td th:text="${user.email}"></td>
+
+                <td class="status-active">
+                    Active
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <br>
+
+    <div class="text-center">
+
+        <a href="/dashboard">
+
+            <button>
+
+                🏠 Dashboard
+
+            </button>
+
+        </a>
+
+        &nbsp;
+
+        <a href="/files">
+
+            <button class="btn-admin-files">
+
+                📁 My Files
+
+            </button>
+
+        </a>
+
+    </div>
+
+</div>
+<script src="/js/theme.js"></script>
+</body>
+
+</html>
